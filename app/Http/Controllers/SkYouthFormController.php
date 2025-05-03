@@ -158,6 +158,7 @@ public function index(Request $request)
 // user controller  / for user
 public function store(Request $request)
 {
+    // 1. Validate data first
     $validator = Validator::make($request->all(), [
         'full_name' => [
             'required', 'string', 'max:255',
@@ -211,34 +212,73 @@ public function store(Request $request)
             ->withInput();
     }
 
-
-    $data = $request->all();
+    // 2. Prepare data
+    $data = $request->except(['profile_picture', 'national_id', 'voter_id']);
     $data['user_id'] = auth()->id();
 
-    if ($request->hasFile('profile_picture')) {
-        $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
-        $data['profile_picture'] = $imagePath;
-    }
-
-
-    if ($request->hasFile('national_id')) {
-        $nationalIdPath = $request->file('national_id')->store('national_ids', 'public');
-        $data['national_id'] = $nationalIdPath;
-    }
-
-    if ($request->hasFile('voter_id')) {
-        $voterIdPath = $request->file('voter_id')->store('voter_ids', 'public');
-        $data['voter_id'] = $voterIdPath;
-    }
-
     try {
+        // 3. Process profile picture
+        if ($request->hasFile('profile_picture')) {
+            try {
+                $file = $request->file('profile_picture');
+                \Log::info('Upload profile_picture', [
+                    'size' => $file->getSize(),
+                    'mime' => $file->getMimeType()
+                ]);
+                $imagePath = $file->store('profile_pictures', 'public');
+                $data['profile_picture'] = $imagePath;
+            } catch (\Exception $e) {
+                \Log::error('Profile picture upload failed: ' . $e->getMessage());
+                throw new \Exception('Profile picture upload failed: ' . $e->getMessage());
+            }
+        }
+
+        // 4. Process national ID
+        if ($request->hasFile('national_id')) {
+            try {
+                $file = $request->file('national_id');
+                \Log::info('Upload national_id', [
+                    'size' => $file->getSize(),
+                    'mime' => $file->getMimeType()
+                ]);
+                $nationalIdPath = $file->store('national_ids', 'public');
+                $data['national_id'] = $nationalIdPath;
+            } catch (\Exception $e) {
+                \Log::error('National ID upload failed: ' . $e->getMessage());
+                throw new \Exception('National ID upload failed: ' . $e->getMessage());
+            }
+        }
+
+        // 5. Process voter ID
+        if ($request->hasFile('voter_id')) {
+            try {
+                $file = $request->file('voter_id');
+                \Log::info('Upload voter_id', [
+                    'size' => $file->getSize(),
+                    'mime' => $file->getMimeType()
+                ]);
+                $voterIdPath = $file->store('voter_ids', 'public');
+                $data['voter_id'] = $voterIdPath;
+            } catch (\Exception $e) {
+                \Log::error('Voter ID upload failed: ' . $e->getMessage());
+                throw new \Exception('Voter ID upload failed: ' . $e->getMessage());
+            }
+        }
+
+        // 6. Create record
         SkYouthForm::create($data);
         return redirect()->route('dashboard')->with('success', 'Registration successfully submitted!');
     } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Something went wrong. Please try again.')->withInput();
+        \Log::error('Form submission error: ' . $e->getMessage(), [
+            'exception' => $e,
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()
+            ->with('error', 'Error during form submission: ' . $e->getMessage())
+            ->withInput();
     }
 }
-
 
     public function checkFormSubmission() {
         $userId = auth()->id();

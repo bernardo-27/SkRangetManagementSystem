@@ -37,47 +37,9 @@ Route::middleware('auth')->group(function () {
 
 
 
-// Add this to your routes/web.php
-Route::post('/test-upload', function(\Illuminate\Http\Request $request) {
-    if (!$request->hasFile('test_image')) {
-        return response()->json(['error' => 'No file uploaded'], 400);
-    }
-
-    try {
-        $file = $request->file('test_image');
-
-        // Log file information
-        \Log::info('Upload test', [
-            'original_name' => $file->getClientOriginalName(),
-            'size' => $file->getSize(),
-            'mime' => $file->getMimeType()
-        ]);
-
-        // Try to store the file
-        $path = $file->store('test_uploads', 'public');
-
-        return response()->json([
-            'success' => true,
-            'path' => $path,
-            'full_url' => \Storage::disk('public')->url($path)
-        ]);
-    } catch (\Exception $e) {
-        \Log::error('Test upload failed: ' . $e->getMessage(), [
-            'exception' => $e,
-            'trace' => $e->getTraceAsString()
-        ]);
-
-        return response()->json([
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine()
-        ], 500);
-    }
-});
-
-// Test form view route
-Route::get('/test-upload-form', function() {
-    return view('test-upload');
+// Add to routes/web.php
+Route::get('/route-test', function() {
+    return response()->json(['status' => 'success', 'message' => 'Route is working!']);
 });
 
 
