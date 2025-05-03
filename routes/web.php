@@ -13,7 +13,7 @@ use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\OfficialController;
 use App\Http\Controllers\KabataanController;
-use App\http\Controllers\SKYouthFormController;
+use App\http\Controllers\SkYouthFormController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KabataanlistController;
 use App\Http\Controllers\Admin\EventController;
