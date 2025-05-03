@@ -9,7 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\http\Controllers\SKYouthFormController;
+use App\http\Controllers\SkYouthFormController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -23,10 +23,10 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 //
-    Route::get('sk-youth-form', [SKYouthFormController::class, 'create'])
+    Route::get('sk-youth-form', [SkYouthFormController::class, 'create'])
     ->name('sk-youth.create');
 //
-    Route::post('sk-youth-form', [SKYouthFormController::class, 'store'])
+    Route::post('sk-youth-form', [SkYouthFormController::class, 'store'])
     ->name('sk-youth.store');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
