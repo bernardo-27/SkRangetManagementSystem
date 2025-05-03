@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Str;
 
-class AdminUserSeeder extends Seeder
+class AdminUserSeeder extends See7der
 {
     /**
      * Run the database seeds.
@@ -20,7 +20,7 @@ class AdminUserSeeder extends Seeder
     {
         // Check if admin user already exists
         $existingAdmin = User::where('email', 'admin@gmail.com')->first();
-        
+
         if (!$existingAdmin) {
             User::create([
                 'name' => 'admin',
@@ -30,7 +30,7 @@ class AdminUserSeeder extends Seeder
                 'remember_token' => Str::random(10),
                 'usertype' => 'admin',
             ]);
-            
+
             $this->command->info('Admin user created successfully!');
         } else {
             $this->command->info('Admin user already exists!');
