@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
 
 
 // Add to routes/web.php
-Route::get('/route-test', function() {
+Route::get('/test-upload', function() {
     return response()->json(['status' => 'success', 'message' => 'Route is working!']);
 });
 
