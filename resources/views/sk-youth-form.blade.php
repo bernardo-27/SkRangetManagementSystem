@@ -1,0 +1,173 @@
+
+@section('content')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center text-primary">SK Youth Registration Form</h2>
+
+
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+
+
+<form action="{{ route('sk-youth-form.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+
+            <h4 class="mt-4 text-secondary">Personal Information</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="full_name" class="form-label">Full Name:</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="dob" class="form-label">Date of Birth:</label>
+                    <input type="date" class="form-control" id="dob" name="dob" required>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <label for="gender" class="form-label">Gender:</label>
+                    <select class="form-select" id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="national_id" class="form-label">National ID / Birth Certificate No.:</label>
+                    <input type="text" class="form-control" id="national_id" name="national_id" required>
+                </div>
+            </div>
+
+            <h4 class="mt-4 text-secondary">Contact Information</h4>
+            <div class="mb-3">
+                <label for="address" class="form-label">Permanent Address:</label>
+                <input class="form-control" id="address" name="address" rows="2" required></i>
+            </div>
+
+            <div class="row">
+                <input type="tel" class="form-control" id="phone" name="phone"
+                required pattern="\d{11}" maxlength="11"
+                title="Phone number must be exactly 11 digits">
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email (Optional):</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+            </div>
+
+            <h4 class="mt-4 text-secondary">Educational Background</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="education" class="form-label">Current Education Level:</label>
+                    <select class="form-select" id="education" name="education" required>
+                        <option value="">Select Level</option>
+                        <option value="high_school">High School</option>
+                        <option value="college">College</option>
+                        <option value="vocational">Vocational</option>
+                        <option value="out_of_school">Out-of-School Youth</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="school_name" class="form-label">School Name (if applicable):</label>
+                    <input type="text" class="form-control" id="school_name" name="school_name">
+                </div>
+            </div>
+
+            <h4 class="mt-4 text-secondary">SK Eligibility & Voter Status</h4>
+            <div class="mb-3">
+                <label class="form-label">Are you a registered voter in your barangay?</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="voter_status" id="voter_yes" value="yes" required>
+                    <label class="form-check-label" for="voter_yes">Yes</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="voter_status" id="voter_no" value="no">
+                    <label class="form-check-label" for="voter_no">No</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="voter_id" class="form-label">Voter’s ID / Registration No. (if applicable):</label>
+                <input type="text" class="form-control" id="voter_id" name="voter_id">
+            </div>
+
+            <h4 class="mt-4 text-secondary">Community Involvement</h4>
+            <div class="mb-3">
+                <label class="form-label">Are you a member of any youth organizations?</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="youth_org" id="org_yes" value="yes" required>
+                    <label class="form-check-label" for="org_yes">Yes</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="youth_org" id="org_no" value="no">
+                    <label class="form-check-label" for="org_no">No</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="skills" class="form-label">Skills & Interests:</label>
+                <textarea class="form-control" id="skills" name="skills" rows="2"></textarea>
+            </div>
+
+            <!-- New Section: Volunteer for SK Programs -->
+            <h4 class="mt-4 text-secondary">Volunteer Opportunity</h4>
+            <div class="mb-3">
+                <label class="form-label">Would you like to volunteer for SK programs?</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="volunteer" id="volunteer_yes" value="yes" required>
+                    <label class="form-check-label" for="volunteer_yes">Yes</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="volunteer" id="volunteer_no" value="no">
+                    <label class="form-check-label" for="volunteer_no">No</label>
+                </div>
+            </div>
+
+            <h4 class="mt-4 text-secondary">Parent/Guardian Information</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="guardian_name" class="form-label">Parent/Guardian Name:</label>
+                    <input type="text" class="form-control" id="guardian_name" name="guardian_name" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="guardian_contact" class="form-label">Parent/Guardian Contact No.:</label>
+                    <input type="tel" class="form-control" id="guardian_contact" name="guardian_contact" required>
+                </div>
+            </div>
+
+            <!-- Profile Picture Upload -->
+            <h4 class="mt-4 text-secondary">Upload 2x2 Picture</h4>
+            <div class="mb-3 text-center">
+                <div id="imagePreview">No Image</div>
+                <input type="file" class="form-control mt-2" id="profile_picture" name="profile_picture" accept="image/*" required>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Submit Registration</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+    <!-- JavaScript for Image Preview -->
+    <script>
+        document.getElementById('profile_picture').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').innerHTML = `<img src="${e.target.result}" alt="Profile Picture" class="img-fluid rounded" style="width: 100%; height: 100%; object-fit: cover;">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
