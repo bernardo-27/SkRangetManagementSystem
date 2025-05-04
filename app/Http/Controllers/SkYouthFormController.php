@@ -103,41 +103,41 @@ public function index(Request $request)
 
         $data = $validator->validated();
 
-        // Handle profile picture update
-        if ($request->hasFile('profile_picture')) {
-            // Delete old image if it exists
-            if ($kabataan->profile_picture && Storage::disk('public')->exists($kabataan->profile_picture)) {
-                Storage::disk('public')->delete($kabataan->profile_picture);
-            }
+// Handle profile picture update
+if ($request->hasFile('profile_picture')) {
+    // Delete old image if it exists
+    if ($kabataan->profile_picture && Storage::disk('rangetsystem')->exists($kabataan->profile_picture)) {
+        Storage::disk('rangetsystem')->delete($kabataan->profile_picture);
+    }
 
-            $fileName = time() . '_profile.' . $request->profile_picture->extension();
-            $filePath = $request->file('profile_picture')->storeAs('profile_pictures', $fileName, 'public');
-            $data['profile_picture'] = $filePath;
-        }
+    $fileName = time() . '_profile.' . $request->profile_picture->extension();
+    $filePath = $request->file('profile_picture')->storeAs('profile_pictures', $fileName, 'rangetsystem');
+    $data['profile_picture'] = $filePath;
+}
 
-        // Handle national ID update
-        if ($request->hasFile('national_id')) {
-            // Delete old image if it exists
-            if ($kabataan->national_id && Storage::disk('public')->exists($kabataan->national_id)) {
-                Storage::disk('public')->delete($kabataan->national_id);
-            }
+// Handle national ID update
+if ($request->hasFile('national_id')) {
+    // Delete old image if it exists
+    if ($kabataan->national_id && Storage::disk('rangetsystem')->exists($kabataan->national_id)) {
+        Storage::disk('rangetsystem')->delete($kabataan->national_id);
+    }
 
-            $fileName = time() . '_national.' . $request->national_id->extension();
-            $filePath = $request->file('national_id')->storeAs('national_ids', $fileName, 'public');
-            $data['national_id'] = $filePath;
-        }
+    $fileName = time() . '_national.' . $request->national_id->extension();
+    $filePath = $request->file('national_id')->storeAs('national_ids', $fileName, 'rangetsystem');
+    $data['national_id'] = $filePath;
+}
 
-        // Handle voter ID update
-        if ($request->hasFile('voter_id')) {
-            // Delete old image if it exists
-            if ($kabataan->voter_id && Storage::disk('public')->exists($kabataan->voter_id)) {
-                Storage::disk('public')->delete($kabataan->voter_id);
-            }
+// Handle voter ID update
+if ($request->hasFile('voter_id')) {
+    // Delete old image if it exists
+    if ($kabataan->voter_id && Storage::disk('rangetsystem')->exists($kabataan->voter_id)) {
+        Storage::disk('rangetsystem')->delete($kabataan->voter_id);
+    }
 
-            $fileName = time() . '_voter.' . $request->voter_id->extension();
-            $filePath = $request->file('voter_id')->storeAs('voter_ids', $fileName, 'public');
-            $data['voter_id'] = $filePath;
-        }
+    $fileName = time() . '_voter.' . $request->voter_id->extension();
+    $filePath = $request->file('voter_id')->storeAs('voter_ids', $fileName, 'rangetsystem');
+    $data['voter_id'] = $filePath;
+}
 
         try {
             $kabataan->update($data);
@@ -218,37 +218,37 @@ public function store(Request $request)
 
     try {
         // Handle profile picture
-        if ($request->hasFile('profile_picture')) {
-            $profilePicture = $request->file('profile_picture');
-            if ($profilePicture->isValid()) {
-                $imagePath = $profilePicture->store('profile_pictures', 'public');
-                $data['profile_picture'] = $imagePath;
-            } else {
-                throw new \Exception('Invalid profile picture: ' . $profilePicture->getErrorMessage());
-            }
-        }
+if ($request->hasFile('profile_picture')) {
+    $profilePicture = $request->file('profile_picture');
+    if ($profilePicture->isValid()) {
+        $imagePath = $profilePicture->store('profile_pictures', 'rangetsystem');
+        $data['profile_picture'] = $imagePath;
+    } else {
+        throw new \Exception('Invalid profile picture: ' . $profilePicture->getErrorMessage());
+    }
+}
 
-        // Handle national ID
-        if ($request->hasFile('national_id')) {
-            $nationalId = $request->file('national_id');
-            if ($nationalId->isValid()) {
-                $nationalIdPath = $nationalId->store('national_ids', 'public');
-                $data['national_id'] = $nationalIdPath;
-            } else {
-                throw new \Exception('Invalid national ID: ' . $nationalId->getErrorMessage());
-            }
-        }
+// Handle national ID
+if ($request->hasFile('national_id')) {
+    $nationalId = $request->file('national_id');
+    if ($nationalId->isValid()) {
+        $nationalIdPath = $nationalId->store('national_ids', 'rangetsystem');
+        $data['national_id'] = $nationalIdPath;
+    } else {
+        throw new \Exception('Invalid national ID: ' . $nationalId->getErrorMessage());
+    }
+}
 
-        // Handle voter ID if present
-        if ($request->hasFile('voter_id')) {
-            $voterId = $request->file('voter_id');
-            if ($voterId->isValid()) {
-                $voterIdPath = $voterId->store('voter_ids', 'public');
-                $data['voter_id'] = $voterIdPath;
-            } else {
-                throw new \Exception('Invalid voter ID: ' . $voterId->getErrorMessage());
-            }
-        }
+// Handle voter ID if present
+if ($request->hasFile('voter_id')) {
+    $voterId = $request->file('voter_id');
+    if ($voterId->isValid()) {
+        $voterIdPath = $voterId->store('voter_ids', 'rangetsystem');
+        $data['voter_id'] = $voterIdPath;
+    } else {
+        throw new \Exception('Invalid voter ID: ' . $voterId->getErrorMessage());
+    }
+}
 
         // Create the record
         SkYouthForm::create($data);
