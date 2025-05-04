@@ -782,75 +782,155 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            function validateForm() {
-                const requiredFields = document.querySelectorAll("input[required], select[required]");
-                for (let field of requiredFields) {
-                    if (!field.value.trim()) {
-                        alert("Please fill out all required fields before proceeding.");
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            // Image preview
-            const profilePicture = document.getElementById('profile_picture');
-            if (profilePicture) {
-                profilePicture.addEventListener('change', function () {
-                    const file = this.files[0];
-                    const preview = document.getElementById('imagePreview');
-
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            preview.innerHTML = `<img src="${e.target.result}" alt="Profile Picture"
-                                class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">`;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-
-            function previewImage(input, previewId) {
-                const preview = document.getElementById(previewId);
-                if (!preview) return;
-
-                const file = input.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        preview.src = e.target.result;
-                        preview.style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
+    // Form validation function
+    window.validateForm = function() {
+        const requiredFields = document.querySelectorAll("input[required], select[required]");
+        let isValid = true;
+        let firstInvalidField = null;
+        
+        // Check all required fields
+        for (let field of requiredFields) {
+            // For file inputs, check if files exist
+            if (field.type === 'file') {
+                if (!field.files || field.files.length === 0) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                    if (!firstInvalidField) firstInvalidField = field;
                 } else {
-                    preview.src = '#';
-                    preview.style.display = 'none';
+                    field.classList.remove('is-invalid');
                 }
+            } 
+            // For other inputs, check if value exists
+            else if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+                if (!firstInvalidField) firstInvalidField = field;
+            } else {
+                field.classList.remove('is-invalid');
             }
+        }
+        
+        // Focus the first invalid field
+        if (firstInvalidField) {
+            firstInvalidField.focus();
+            Swal.fire({
+                icon: 'error',
+                title: 'Form Incomplete',
+                text: 'Please fill out all required fields before proceeding.'
+            });
+        }
+        
+        return isValid;
+    };
 
-            const nationalId = document.getElementById('national_id');
-            if (nationalId) {
-                nationalId.addEventListener('change', function () {
-                    previewImage(this, 'preview_national_id');
-                });
-            }
-
-            const voterId = document.getElementById('voter_id');
-            if (voterId) {
-                voterId.addEventListener('change', function () {
-                    previewImage(this, 'preview_voter_id');
-                });
-            }
-
-            // Initialize tooltips
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            if (tooltipTriggerList.length > 0) {
-                const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
+    // Image preview functions
+    const profilePicture = document.getElementById('profile_picture');
+    if (profilePicture) {
+        profilePicture.addEventListener('change', function () {
+            const file = this.files[0];
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'File Too Large',
+                        text: 'Profile picture must be less than 10MB.'
+                    });
+                    this.value = ''; // Clear the input
+                    return;
+                }
+                
+                // Validate file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid File Type',
+                        text: 'Please select a valid image file (JPEG, PNG, GIF).'
+                    });
+                    this.value = ''; // Clear the input
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Profile Picture"
+                        class="rounded-circle" style="width: 100%; height: 100%; object-fit: cover;">`;
+                };
+                reader.readAsDataURL(file);
             }
         });
+    }
+
+    // Function to preview ID images
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        if (!preview) return;
+
+        const file = input.files[0];
+        if (file) {
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'File Too Large',
+                    text: 'Image must be less than 10MB.'
+                });
+                input.value = ''; // Clear the input
+                return;
+            }
+            
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid File Type',
+                    text: 'Please select a valid image file (JPEG, PNG, GIF).'
+                });
+                input.value = ''; // Clear the input
+                return;
+            }
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '#';
+            preview.style.display = 'none';
+        }
+    }
+
+    // Setup event listeners for ID uploads
+    const nationalId = document.getElementById('national_id');
+    if (nationalId) {
+        nationalId.addEventListener('change', function () {
+            previewImage(this, 'preview_national_id');
+        });
+    }
+
+    const voterId = document.getElementById('voter_id');
+    if (voterId) {
+        voterId.addEventListener('change', function () {
+            previewImage(this, 'preview_voter_id');
+        });
+    }
+
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    if (tooltipTriggerList.length > 0) {
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+});
     </script>
 
     <style>
