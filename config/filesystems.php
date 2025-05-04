@@ -40,7 +40,7 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
-    'throw' => true,
+    'throw' => false,
                 'report' => true,
         ],
 
@@ -56,7 +56,18 @@ return [
             'throw' => true,
             'report' => false,
         ],
-
+'rangetsystem' => [
+            'driver' => 's3',
+            'key' => env('RANGETSYSTEM_ACCESS_KEY_ID', env('AWS_ACCESS_KEY_ID')),
+            'secret' => env('RANGETSYSTEM_SECRET_ACCESS_KEY', env('AWS_SECRET_ACCESS_KEY')),
+            'region' => env('RANGETSYSTEM_DEFAULT_REGION', env('AWS_DEFAULT_REGION', 'us-east-1')),
+            'bucket' => env('RANGETSYSTEM_BUCKET', env('AWS_BUCKET')),
+            'url' => env('RANGETSYSTEM_URL', env('AWS_URL')),
+            'endpoint' => env('RANGETSYSTEM_ENDPOINT', env('AWS_ENDPOINT')),
+            'use_path_style_endpoint' => env('RANGETSYSTEM_USE_PATH_STYLE_ENDPOINT', env('AWS_USE_PATH_STYLE_ENDPOINT', false)),
+            'visibility' => 'public',
+            'throw' => false,
+        ],
     ],
 
     /*
