@@ -158,7 +158,7 @@ public function index(Request $request)
 // user controller  / for user
 public function store(Request $request)
 {
-    // 1. Validate data first
+    // Validate the form data
     $validator = Validator::make($request->all(), [
         'full_name' => [
             'required', 'string', 'max:255',
@@ -203,7 +203,7 @@ public function store(Request $request)
         'volunteer' => 'required',
         'guardian_name' => 'required',
         'guardian_contact' => 'required',
-        'profile_picture' => 'nullable|image|max:10240',
+        'profile_picture' => 'required|image|max:10240',
     ]);
 
     if ($validator->fails()) {
@@ -212,70 +212,55 @@ public function store(Request $request)
             ->withInput();
     }
 
-    // 2. Prepare data
+    // Prepare the data
     $data = $request->except(['profile_picture', 'national_id', 'voter_id']);
     $data['user_id'] = auth()->id();
 
     try {
-        // 3. Process profile picture
+        // Handle profile picture
         if ($request->hasFile('profile_picture')) {
-            try {
-                $file = $request->file('profile_picture');
-                \Log::info('Upload profile_picture', [
-                    'size' => $file->getSize(),
-                    'mime' => $file->getMimeType()
-                ]);
-                $imagePath = $file->store('profile_pictures', 'public');
+            $profilePicture = $request->file('profile_picture');
+            if ($profilePicture->isValid()) {
+                $imagePath = $profilePicture->store('profile_pictures', 'public');
                 $data['profile_picture'] = $imagePath;
-            } catch (\Exception $e) {
-                \Log::error('Profile picture upload failed: ' . $e->getMessage());
-                throw new \Exception('Profile picture upload failed: ' . $e->getMessage());
+            } else {
+                throw new \Exception('Invalid profile picture: ' . $profilePicture->getErrorMessage());
             }
         }
 
-        // 4. Process national ID
+        // Handle national ID
         if ($request->hasFile('national_id')) {
-            try {
-                $file = $request->file('national_id');
-                \Log::info('Upload national_id', [
-                    'size' => $file->getSize(),
-                    'mime' => $file->getMimeType()
-                ]);
-                $nationalIdPath = $file->store('national_ids', 'public');
+            $nationalId = $request->file('national_id');
+            if ($nationalId->isValid()) {
+                $nationalIdPath = $nationalId->store('national_ids', 'public');
                 $data['national_id'] = $nationalIdPath;
-            } catch (\Exception $e) {
-                \Log::error('National ID upload failed: ' . $e->getMessage());
-                throw new \Exception('National ID upload failed: ' . $e->getMessage());
+            } else {
+                throw new \Exception('Invalid national ID: ' . $nationalId->getErrorMessage());
             }
         }
 
-        // 5. Process voter ID
+        // Handle voter ID if present
         if ($request->hasFile('voter_id')) {
-            try {
-                $file = $request->file('voter_id');
-                \Log::info('Upload voter_id', [
-                    'size' => $file->getSize(),
-                    'mime' => $file->getMimeType()
-                ]);
-                $voterIdPath = $file->store('voter_ids', 'public');
+            $voterId = $request->file('voter_id');
+            if ($voterId->isValid()) {
+                $voterIdPath = $voterId->store('voter_ids', 'public');
                 $data['voter_id'] = $voterIdPath;
-            } catch (\Exception $e) {
-                \Log::error('Voter ID upload failed: ' . $e->getMessage());
-                throw new \Exception('Voter ID upload failed: ' . $e->getMessage());
+            } else {
+                throw new \Exception('Invalid voter ID: ' . $voterId->getErrorMessage());
             }
         }
 
-        // 6. Create record
+        // Create the record
         SkYouthForm::create($data);
+        
         return redirect()->route('dashboard')->with('success', 'Registration successfully submitted!');
     } catch (\Exception $e) {
-        \Log::error('Form submission error: ' . $e->getMessage(), [
-            'exception' => $e,
-            'trace' => $e->getTraceAsString()
-        ]);
+        // Log the full error
+        \Log::error('Youth Form Submission Error: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
         
         return redirect()->back()
-            ->with('error', 'Error during form submission: ' . $e->getMessage())
+            ->with('error', 'Error uploading files: ' . $e->getMessage())
             ->withInput();
     }
 }
