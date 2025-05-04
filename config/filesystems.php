@@ -66,7 +66,7 @@ return [
             'endpoint' => env('RANGETSYSTEM_ENDPOINT', env('AWS_ENDPOINT')),
             'use_path_style_endpoint' => env('RANGETSYSTEM_USE_PATH_STYLE_ENDPOINT', env('AWS_USE_PATH_STYLE_ENDPOINT', false)),
             'visibility' => 'public',
-            'throw' => false,
+            'throw' => true,
         ],
     ],
 
