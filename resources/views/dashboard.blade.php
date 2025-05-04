@@ -575,14 +575,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <form action="{{ route('sk-youth-form.store') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
                                 
                                 <div class="mb-3 text-center">
-                                    <label for="profile_picture" style="cursor: pointer;" data-bs-toggle="tooltip" title="Click to Upload Picture">
-                                        <div id="imagePreview" class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
-                                             style="width: 150px; height: 150px; border: 2px dashed #ccc; background-color: #f9f9f9;">
-                                            <i class="bi bi-person-fill" style="font-size: 60px; color: #ccc;"></i>
-                                        </div>
-                                    </label>
-                                    <input type="file" class="form-control mt-2" id="profile_picture" name="profile_picture" accept="image/*"
-                                           style="display: none;" required>
+<label for="profile_picture">Profile Picture</label>
+            <input type="file" class="form-control @error('profile_picture') is-invalid @enderror" 
+                   id="profile_picture" name="profile_picture" accept="image/*" required>
+            @error('profile_picture')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
+            <div class="mt-2">
+                <img id="profile_preview" src="#" alt="Profile Preview" style="display:none; max-width:100%; max-height:200px;">
+            </div>
                                 </div>
                                 <h4 class="mt-4 text-secondary">Personal Information</h4>
                                 <div class="row">
@@ -616,7 +617,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                     <div class="col-md-6">
                                         <label for="national_id" class="form-label">Valid ID Picture</label>
-                                        <input type="file" class="form-control" id="national_id" name="national_id" accept="image/*" required>
+            <input type="file" class="form-control @error('national_id') is-invalid @enderror" 
+                   id="national_id" name="national_id" accept="image/*" required>
+            @error('national_id')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
                                         <img id="preview_national_id" src="#" alt="Preview" class="img-fluid mt-2" style="max-height: 200px; display: none;">
                                     </div>
                                 </div>
@@ -713,7 +718,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                     <div class="col-md-6">
                                         <label for="voter_id" class="form-label">Voter's ID (if applicable):</label>
-                                        <input type="file" class="form-control" id="voter_id" name="voter_id" accept="image/*">
+            <input type="file" class="form-control @error('voter_id') is-invalid @enderror" 
+                   id="voter_id" name="voter_id" accept="image/*">
+            @error('voter_id')
+                <span class="invalid-feedback">{{ $message }}</span>
+            @enderror
                                         <img id="preview_voter_id" src="#" alt="Preview" class="img-fluid mt-2" style="max-height: 200px; display: none;">
                                     </div>
                                 </div>
